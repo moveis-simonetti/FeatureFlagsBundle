@@ -1,5 +1,5 @@
 {
-    "name": "dzunke/feature-flags-bundle",
+    "name": "simonetti/feature-flags-bundle",
     "description": "Symfony Bundle to implement Feature Flags to your Application",
     "keywords": ["symfony", "bundle", "feature flags"],
     "homepage": "https://github.com/DZunke/FeatureFlagsBundle",
