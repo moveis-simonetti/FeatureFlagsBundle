@@ -12,7 +12,7 @@ class Configuration implements ConfigurationInterface
     /**
      * @return TreeBuilder
      */
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('d_zunke_feature_flags');
         $rootNode    = $treeBuilder->getRootNode();

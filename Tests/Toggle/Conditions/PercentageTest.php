@@ -41,38 +41,44 @@ class PercentageTest extends TestCase
         $sut = new Percentage($this->requestStackMock);
         $sut->validate([], 'nothing');
     }
-
-    public function testItReturnsTrueWhenCookieIsAlreadySet()
+    public function testItReturnsTrueWhenCookieIsAlreadySet(): void
     {
-        $parameterBagMock = $this->createMock(ParameterBag::class);
-        $parameterBagMock->method('has')->willReturn(true);
-        $parameterBagMock->method('get')->willReturn(1);
-
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->cookies = $parameterBagMock;
+        $request = new Request(
+            cookies: [
+                'percentage' => 1,
+            ]
+        );
 
         $requestStackMock = $this->createMock(RequestStack::class);
-        $requestStackMock->method('getMainRequest')->willReturn($requestMock);
+        $requestStackMock
+            ->method('getMainRequest')
+            ->willReturn($request);
 
         $sut = new Percentage($requestStackMock);
-        $this->assertTrue($sut->validate([
-            'percentage' => 798,
-        ]));
+
+        $this->assertTrue(
+            $sut->validate([
+                'percentage' => 798,
+            ])
+        );
     }
 
-    public function testItReturnsBoolWhenCookieIsNotSet()
+    public function testItReturnsBoolWhenCookieIsNotSet(): void
     {
-        $parameterBagMock = $this->createMock(ParameterBag::class);
-        $parameterBagMock->method('has')->willReturn(true);
-
-        $requestMock = $this->createMock(Request::class);
-        $requestMock->cookies = $parameterBagMock;
+        $request = new Request(cookies: []);
 
         $requestStackMock = $this->createMock(RequestStack::class);
-        $requestStackMock->method('getMainRequest')->willReturn($requestMock);
+        $requestStackMock
+            ->method('getMainRequest')
+            ->willReturn($request);
 
         $sut = new Percentage($requestStackMock);
-        self::assertIsBool($sut->validate(['percentage' => 3]));
+
+        self::assertIsBool(
+            $sut->validate([
+                'percentage' => 3,
+            ])
+        );
     }
 
     public function testToString()
