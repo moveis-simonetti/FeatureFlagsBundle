@@ -2,6 +2,7 @@
 
 namespace DZunke\FeatureFlagsBundle\Toggle\Conditions;
 
+use Symfony\Component\HttpFoundation\Cookie;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -23,26 +24,32 @@ class Percentage extends AbstractCondition implements ConditionInterface
 
     /**
      * @param mixed $config
-     * @param null  $argument
+     * @param null $argument
      * @return bool
      * @throws \Exception
      */
-    public function validate($config, $argument = null)
+
+    public function validate($config, $argument = null): bool
     {
         $config = $this->formatConfig($config);
+        $request = $this->requestStack->getMainRequest();
 
-        if ($this->requestStack->getMainRequest()->cookies->has($config['cookie'])) {
-            return (bool)$this->requestStack->getMainRequest()->cookies->get($config['cookie']);
+        if ($request?->cookies->has($config['cookie'])) {
+            return (bool) $request->cookies->get($config['cookie']);
         }
 
-        $value = (int)($this->generateRandomNumber() < $config['percentage']);
-        setcookie(
-            $config['cookie'],
-            $value,
-            time() + $config['lifetime']
+        $value = (int) ($this->generateRandomNumber() < $config['percentage']);
+
+        $request?->attributes->set(
+            '_feature_flag_cookie',
+            new Cookie(
+                $config['cookie'],
+                (string)$value,
+                time() + $config['lifetime']
+            )
         );
 
-        return (bool)$value;
+        return (bool) $value;
     }
 
     private function formatConfig($config)
